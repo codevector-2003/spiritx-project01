@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './loginpage.css';
@@ -8,8 +8,20 @@ const LoginRegister = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState("");
-    
+
+    useEffect(() => {
+        // Check if user credentials are saved in localStorage
+        const savedUsername = localStorage.getItem("rememberedUsername");
+        const savedPassword = localStorage.getItem("rememberedPassword");
+        if (savedUsername && savedPassword) {
+            setUsername(savedUsername);
+            setPassword(savedPassword);
+            setRememberMe(true);
+        }
+    }, []);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
@@ -21,6 +33,15 @@ const LoginRegister = () => {
             }, { withCredentials: true });
 
             alert(response.data.message); // Show success message
+
+            if (rememberMe) {
+                localStorage.setItem("rememberedUsername", username);
+                localStorage.setItem("rememberedPassword", password);
+            } else {
+                localStorage.removeItem("rememberedUsername");
+                localStorage.removeItem("rememberedPassword");
+            }
+
             navigate("/profile"); // Redirect to profile/dashboard after login
         } catch (err) {
             setError(err.response?.data?.detail || "Login failed. Please try again.");
@@ -60,7 +81,11 @@ const LoginRegister = () => {
                     {error && <p className="error-message">{error}</p>}
                     <div className='remember-forgot'>
                         <label>
-                            <input type='checkbox' />
+                            <input 
+                                type='checkbox' 
+                                checked={rememberMe} 
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                            />
                             Remember Me
                         </label>
                         <a href="">Forgot password</a>
