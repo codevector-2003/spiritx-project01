@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./signuppage.css";
+import axios from "axios";
 import { FaUser, FaLock } from "react-icons/fa";
+import "./signuppage.css";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -9,9 +10,9 @@ const Signup = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errors, setErrors] = useState({});
-    const [authError, setAuthError] = useState(""); // Authentication error message
-    const [passwordStrength, setPasswordStrength] = useState(""); // Password strength message
-    const [successMessage, setSuccessMessage] = useState(""); // Success message
+    const [authError, setAuthError] = useState("");
+    const [passwordStrength, setPasswordStrength] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     const validateUsername = (username) => {
         if (username.length < 8) return "Username must be at least 8 characters long";
@@ -40,10 +41,10 @@ const Signup = () => {
         return "";
     };
 
-    const handleSignup = (e) => {
+    const handleSignup = async (e) => {
         e.preventDefault();
         setAuthError("");
-
+        
         const newErrors = {
             username: validateUsername(username),
             password: validatePassword(password),
@@ -53,25 +54,27 @@ const Signup = () => {
         setErrors(newErrors);
 
         if (!newErrors.username && !newErrors.password && !newErrors.confirmPassword) {
-            setSuccessMessage("Signup Successful! Redirecting to login...");
-            setTimeout(() => navigate("/login"), 2000);
+            try {
+                const response = await axios.post("/signup", {
+                    username,
+                    password,
+                    confirmPassword,
+                });
+                setSuccessMessage(response.data.message);
+                setTimeout(() => navigate("/login"), 2000);
+            } catch (error) {
+                setAuthError(error.response?.data?.detail || "Signup failed. Please try again.");
+            }
         } else {
             setAuthError("Please fix the errors before proceeding.");
         }
     };
-
-    const handleloginClick = (e) => {
-        e.preventDefault(); // Prevent the default link behavior
-        navigate('/LoginRegister'); // Navigate to the signup page
-    };
-
 
     return (
         <div className="wrapper2">
             <div className="form-box signup">
                 <form onSubmit={handleSignup}>
                     <h1>Sign Up</h1>
-
                     <div className="input-box">
                         <input
                             type="text"
@@ -86,7 +89,6 @@ const Signup = () => {
                         <FaUser className="icon" />
                         {errors.username && <p className="error-message">{errors.username}</p>}
                     </div>
-
                     <div className="input-box">
                         <input
                             type="password"
@@ -102,7 +104,6 @@ const Signup = () => {
                         {errors.password && <p className="error-message">{errors.password}</p>}
                         {password && <p className={`password-strength ${passwordStrength.toLowerCase()}`}>Strength: {passwordStrength}</p>}
                     </div>
-
                     <div className="input-box">
                         <input
                             type="password"
@@ -117,23 +118,9 @@ const Signup = () => {
                         <FaLock className="icon" />
                         {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
                     </div>
-
-                    {/* Authentication-related error message */}
                     {authError && <p className="auth-error">{authError}</p>}
-
-                    {/* Success message after signup */}
                     {successMessage && <p className="success-message">{successMessage}</p>}
-
                     <button type="submit">Sign Up</button>
-
-                    <div className="register-link">
-                        <p>
-                            Already have an account?{" "}
-                            <a href="#" onClick={handleloginClick}>
-                                Login
-                            </a>
-                        </p>
-                    </div>
                 </form>
             </div>
         </div>

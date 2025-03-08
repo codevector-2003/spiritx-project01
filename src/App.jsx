@@ -7,10 +7,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Redirect the root path to the login page */}
         <Route path="/" element={<Navigate to="/LoginRegister" />} />
-        
-        {/* Define the Login and Signup routes */}
         <Route path="/LoginRegister" element={<LoginRegister />} />
         <Route path="/Signup" element={<Signup />} />
       </Routes>
