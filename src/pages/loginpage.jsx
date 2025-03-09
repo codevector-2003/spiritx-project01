@@ -15,10 +15,10 @@ const LoginRegister = () => {
         setError("");
 
         try {
-            const response = await axios.post("/login", {
+            const response = await axios.post("http://127.0.0.1:8075/login", {
                 username,
                 password
-            }, { withCredentials: true });
+            });
 
             alert(response.data.message); // Show success message
             navigate("/profile"); // Redirect to profile/dashboard after login
