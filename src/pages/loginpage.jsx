@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 import './loginpage.css';
 import { FaUser, FaLock } from "react-icons/fa";
 
@@ -78,6 +78,7 @@ const LoginRegister = () => {
                         />
                         <FaLock className='icon' />
                     </div>
+                    
                     {error && <p className="error-message">{error}</p>}
                     <div className='remember-forgot'>
                         <label>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+//import axios from "axios";
 import { FaUser, FaLock } from "react-icons/fa";
 import "./signuppage.css";
 
